@@ -19,7 +19,7 @@ public class Log4jJndi {
 
   private static String appBaseDir = null;
 
-  private static final String JNDI_LOOKUP_CLASS = "org/apache/logging/log4j/core/lookup/JndiLookup.class";
+  private static String searchClass = "org/apache/logging/log4j/core/lookup/JndiLookup.class";
 
   public static void main(final String[] args) {
     if (args == null || args.length == 0) {
@@ -31,6 +31,9 @@ public class Log4jJndi {
         switch (args[i]) {
         case "--base":
           appBaseDir = getStrArgVal(args[i], ++i, args);
+          break;
+        case "--class":
+          searchClass = getStrArgVal(args[i], ++i, args);
           break;
         case "--debug":
           debug = true;
@@ -74,7 +77,7 @@ public class Log4jJndi {
 
     final URL[] urls = javaArchives.toArray(new URL[0]);
     final URLClassLoader classLoader = new URLClassLoader(urls);
-    final Enumeration<URL> resUrls = classLoader.getResources(JNDI_LOOKUP_CLASS);
+    final Enumeration<URL> resUrls = classLoader.getResources(searchClass);
     while (resUrls.hasMoreElements()) {
       final URL jndiLookupUrl = resUrls.nextElement();
       if (jndiLookupUrl.getProtocol().equals("jar")) {
@@ -83,7 +86,7 @@ public class Log4jJndi {
         final int beginIndex = jndiLookupFullURL.indexOf(':') + 1;
         final int endIndex = jndiLookupFullURL.lastIndexOf('!');
         final String jndiLookupJarPath = jndiLookupFullURL.substring(beginIndex, endIndex);
-        final String deleteCmd = String.format("zip -q -d %s %s", jndiLookupJarPath, JNDI_LOOKUP_CLASS);
+        final String deleteCmd = String.format("zip -q -d %s %s", jndiLookupJarPath, searchClass);
         if (print) {
           System.out.println(deleteCmd);
         } else if (delete) {
@@ -139,7 +142,7 @@ public class Log4jJndi {
 
   private static void usage() {
     System.err.println("Usage: ");
-    System.err.println("java -jar com.hpe.edf.Log4jJndi --base <base folder to scan> [--debug] [--print|--delete]");
+    System.err.println("java -jar com.hpe.edf.Log4jJndi --base <base folder to scan> [--debug] [--print|--delete] [--class <classname>]");
     System.exit(22);
   }
 
