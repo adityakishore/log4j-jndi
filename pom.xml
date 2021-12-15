@@ -7,7 +7,7 @@
 
   <groupId>com.hpe.edf</groupId>
   <artifactId>log4j-jndi-fix</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
